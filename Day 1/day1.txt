@@ -1,0 +1,40 @@
+DBMS : a collection of data that can be accessed electronically;
+    1. Heirarchical database
+    2. Relational database
+    3. Document oriented
+    4. Centrilized
+    5. Distributed
+
+RDBMS : a technique (software) used to store data (database)(where we store data physically);
+
+CREATE TABLE=>
+    // create two tables orders and customers to perform queries 
+            orders-> CREATE TABLE orders(orderId INT PRIMARY KEY, items VARCHAR(250),payment_type VARCHAR(50));
+            customers-> CREATE TABLE customers (customerId INT PRIMARY KEY, name VARCHAR(255), orderId INT, address VARCHAR(255), FOREIGN KEY (orderId) REFERENCES orders(orderId));
+
+INSERT DATA =>
+    // insert data in orders table
+            INSERT INTO orders(orderId, items, payment_type) VALUES (1, "paneer pakoda", "cash");
+
+FETCH DATA =>
+    //fetch customer details using order details
+            SELECT customers.customerId, customers.name, customers.address, orders.orderId, orders.items, orders.payment_type
+            FROM orders
+            INNER JOIN customers ON orders.orderId=customers.orderId;
+    
+UPDATE DATA =>
+    // update customer name with "kul deep varma" of customer having customerId=1
+            UPDATE customers SET name="kul deep varma" WHERE customerId=1;
+
+UPDATE COLUMN NAME =>
+    // update column name address with location
+            UPDATE customers SET address = 'location';
+
+DELETE DATA =>
+    // single row
+            DELETE FROM customers WHERE customerId = 1;
+    // all rows
+            DELETE FROM customers;
+
+DELETE TABLE =>
+            DROP TABLE orders;
