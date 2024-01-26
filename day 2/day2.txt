@@ -1,0 +1,103 @@
+ORDER BY=>
+        SELECT * FROM customers ORDER BY orderId;  //Ascending order
+        SELECT * FROM customers ORDER BY orderId DESC;  //Descending order
+
+COPY ONE TABLE DATA TO ANOTHER =>
+        INSERT INTO newcustomers (column1, column2, column3) SELECT column1, column2, column3 FROM customers WHERE payment_type = "cash";        // copy all customers of customers table (who paid cash) to table newcustomers
+
+UPDATE =>
+        UPDATE customers SET payment_type="payment_method";             // update table column
+        UPDATE customers SET payment_type="cash" WHERE customerId=1;    // update data of customerId 1
+
+DELETE =>
+        DELETE FROM orders;                     // delete all records of table (slower than truncate) (mostly used to delete specific records)
+        DELETE FROM orders WHERE orderId=1;     // delete only record having id 1
+
+
+DDL (DATA DEFINATION LANGUAGE) =>
+    TRUNCATE =>
+            TRUNCATE TABLE orders;                  // deletes all records (faster than DELETE query) (can't delete a table which is connect via foreign key or view)
+
+    ALTER => 
+            ALTER TABLE orders ADD itemCount VARCHAR(255);  //add a new column in table named itemCount of VARCHAR payment_type
+            ALTER TABLE orders ADD (itemCount VARCHAR(255), column2 type);  //add multiple new column in table
+            ALTER TABLE orders DROP itemCount;              //deletes the column named itemCount
+            ALTER TABLE orders DROP (itemCount, columnname1, columnname2);              //deletes multiple column
+
+    CREATE TABLE =>
+            orders-> CREATE TABLE orders(orderId INT PRIMARY KEY, items VARCHAR(250),payment_type VARCHAR(50));     // create orders table having these columns
+            customers-> CREATE TABLE customers (customerId INT PRIMARY KEY, name VARCHAR(255), orderId INT, address VARCHAR(255), FOREIGN KEY (orderId) REFERENCES orders(orderId));    // create customers table having these columns
+
+DML (DATA MANIPULATION LANGUAGE) =>
+    FROM =>
+        SELECT * FROM orders;                               // fetch all data of orders table
+        SELECT * FROM orders WHERE payment_method="cash";   // fetch all data of orders having payment type "cash"
+    
+    WHERE =>
+        SELECT * FROM orders WHERE payment_method="cash";   // fetch all data of orders having payment type "cash"
+        SELECT * FROM orders WHERE orderId > 2;             // fetch all data having orderId greater than 2
+
+    ORDER BY =>
+        SELECT * FROM orders ORDER BY orderId ASC;          // fetch all data from orders and show in Ascending order (bydefault is ascending / without writing ASC, query will work fine)
+        SELECT * FROM orders ORDER BY orderId DESC;         // fetch all data from orders and show in Descending order
+
+    GROUP BY =>
+        SELECT customername, SUM(paidAmount), designation FROM customers GROUP BY DESIGNATION;   // groups the data of customers having same designation and SUM(paidAmount) calculates sum of all amount paid by same designation customer and return the record
+        SELECT customername, SUM(paidAmount), designation FROM customers GROUP BY DESIGNATION HAVING SUM(paidAmount) > 1000;   // returns data after grouping having SUM of paidAmount by all of same Designation is greater than 1000
+
+    HAVING =>
+        SELECT customername, SUM(paidAmount) as total, designation FROM customers GROUP BY DESIGNATION HAVING total > 1000;   // total used for local variable in query
+
+    JOINS =>
+        SELECT orders.items, customers.customername FROM orders INNER JOIN customers ON orders.orderId = customers.orderId;     // return matching records of both table (on basis of orderId)
+        SELECT orders.items, customers.customername FROM orders LEFT JOIN customers ON orders.orderId = customers.orderId;     // return matching records of both table (on basis of orderId) and all records of left table (orders)
+        SELECT orders.items, customers.customername FROM orders RIGHT JOIN customers ON orders.orderId = customers.orderId;     // return matching records of both table (on basis of orderId) and all records of right table (customers)
+        SELECT orders.items, customers.customername FROM orders FULL OUTER JOIN customers ON orders.orderId = customers.orderId;     // return all records from both tables
+    
+    INSERT =>
+        INSERT INTO orders VALUES (5, "paneer pakoda", "cash",... till last column);  // insert new record in orders table
+        INSERT INTO orders (orderId, items, payment_type) VALUES (5, "paneer pakoda", "cash");  // insert new record in orders table with specific data (some column may be empty)
+        INSERT INTO newcustomers (column1, column2, column3) SELECT column1, column2, column3 FROM customers WHERE payment_type = "cash";       // copy data to newcustomers table from customers table who paid as "cash"        // copy all customers of customers table (who paid cash) to table newcustomers
+
+    UPDATE =>
+        UPDATE customers SET name="kul deep varma" WHERE customerId=1;      // update name as "kul deep varma" of record having customerId as 1.
+        UPDATE customers SET address = "location";                          // replace table column name (address) with "location
+
+    DELETE =>
+        DELETE FROM customers WHERE customerId = 1;     // delete one rows (which satisfies this condition)
+        DELETE FROM customers;                          // delete all records from table
+
+        <==NOTE==> slower operation than truncate, mostly used to delete number of records
+
+MATH QUERIES =>
+    SUM() =>
+        SELECT SUM(amount) AS total FROM orders;    //  return sum of amount of all records (prints all records or orders table and below that table sum of amount)
+
+    COUNT() =>
+        SELECT COUNT(*) FROM orders;                // return number of records
+
+    AVG() =>
+        SELECT AVG(amount) FROM orders;                // return average of amounts of all records
+
+    MIN() =>
+        SELECT MIN(amount) FROM orders;                // return record of min amount
+
+    MAX() =>
+        SELECT MAX(amount) FROM orders;                // return record of max amount
+
+KEYS =>
+    PRIMARY KEY =>
+        CREATE TABLE Employees (ID INT PRIMARY KEY);        // ID can't be same for any record (we can use PRIMARY KEY only with one record in table)
+        
+    FOREIGN KEY =>
+        CREATE TABLE emp (ID INT FOREIGN KEY REFERENCES Employees(ID));        // ID of emp table linked to ID of Employees table
+        
+    UNIQUE =>
+        CREATE TABLE Employees (ID INT UNIQUE);        // ID can't be same for any record (UNIQUE can be used for more than one column)
+        
+    NOT NULL =>
+        CREATE TABLE Employees (name VARCHAR(255) NOT NULL);        // while inserting records, name can't be kept empty
+        
+    CHECK => 
+        CREATE TABLE Employees (salary INT CHECK (salary>12000));        // can insert record if the salary is greater than 12000
+        
